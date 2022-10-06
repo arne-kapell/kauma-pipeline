@@ -1,9 +1,5 @@
 name: labwork-docker
 
-env:
-  TEST_SERVER: https://dhbw.johannes-bauer.com/lwsub/
-  CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  DEFAULT_ASSIGNMENT: labwork01
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
