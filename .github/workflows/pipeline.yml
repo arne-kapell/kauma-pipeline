@@ -134,9 +134,9 @@ jobs:
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
           echo "## Container execution logs" >> $GITHUB_STEP_SUMMARY
-          # echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
           ./run-testcases -n -a ${{ env.ASSIGNMENT  }} -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY
-          # echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
   get_stats:
     name: Print stats
     needs: labwork_docker_run
