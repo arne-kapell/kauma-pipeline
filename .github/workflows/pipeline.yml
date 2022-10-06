@@ -105,7 +105,7 @@ jobs:
             ass=$(cat .current_assignment | head -n 1)
             echo "Loaded current assignment: $ass"
           else
-            ass=$(echo $DEFAULT_ASSIGNMENT)
+            ass=${{ inputs.DEFAULT_ASSIGNMENT }}
             echo "No current assignment found, using default: $ass"
             echo "## WARNING" >> $GITHUB_STEP_SUMMARY
             echo "No current assignment found, using default: $ass" >> $GITHUB_STEP_SUMMARY
@@ -133,6 +133,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
+          echo "## Container execution logs" >> $GITHUB_STEP_SUMMARY
           ./run-testcases -n -a ${{ env.ASSIGNMENT  }} -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY
   get_stats:
     name: Print stats
