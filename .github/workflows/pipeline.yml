@@ -1,18 +1,22 @@
-name: labwork-docker
+name: KAuMA-Pipeline (labwork-docker)
 
-env:
-  TEST_SERVER: https://dhbw.johannes-bauer.com/lwsub/
-  CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  DEFAULT_ASSIGNMENT: labwork01
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      TEST_SERVER:
+        description: 'URL of the test server (API)'
+        required: false
+        type: string
+        default: 'https://dhbw.johannes-bauer.com/lwsub/'
+      DEFAULT_ASSIGNMENT:
+        description: 'Assignment to use'
+        type: string
+        required: false
+        default: 'labwork01'
+    secrets:
+      CLIENT_ID:
+        required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -116,7 +120,7 @@ jobs:
       - name: Ping Test-Server
         uses: srt32/uptime@master
         with:
-          url-to-hit: ${{ env.TEST_SERVER }}
+          url-to-hit: ${{ inputs.TEST_SERVER }}
           # expected-statuses: "200"
       - uses: actions/download-artifact@v3
         with:
@@ -126,8 +130,8 @@ jobs:
       - name: Run labwork container with submission
         env:
           TARBALL: submission.tar.gz
-          SERVER: ${{ env.TEST_SERVER }}
-          CLIENT_ID: ${{ env.CLIENT_ID }}
+          SERVER: ${{ inputs.TEST_SERVER }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
           ./run-testcases -n -a labwork01 -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY # TODO: -a labworkXX
@@ -136,11 +140,14 @@ jobs:
     needs: labwork_docker_run
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - env:
+          SERVER: ${{ inputs.TEST_SERVER }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        run: |
           echo "## Status after executing current submission" >> $GITHUB_STEP_SUMMARY
           echo "| name | description | points |" >> $GITHUB_STEP_SUMMARY
           echo "| ---- | ----------- | ------ |" >> $GITHUB_STEP_SUMMARY
-          res=$(curl -H "Accept: application/json" $TEST_SERVER/status/$CLIENT_ID)
+          res=$(curl -H "Accept: application/json" $SERVER/status/$CLIENT_ID)
           if [ $? -ne 0 ]; then
             echo "ERROR: Could not get status from server"
             exit 1

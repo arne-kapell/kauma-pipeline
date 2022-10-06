@@ -1,0 +1,24 @@
+name: labwork-docker
+
+env:
+  TEST_SERVER: https://dhbw.johannes-bauer.com/lwsub/
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  DEFAULT_ASSIGNMENT: labwork01
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  call-pipeline:
+    uses: arne-kapell/kauma-pipeline/.github/workflows/pipeline.yml@main
+    with:
+      TEST_SERVER: 'https://dhbw.johannes-bauer.com/lwsub/' # optional (default: https://dhbw.johannes-bauer.com/lwsub/)
+      DEFAULT_ASSIGNMENT: 'labwork01' # optional (default: labwork01)
+    secrets:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }} # required (can be set in your repository settings)
