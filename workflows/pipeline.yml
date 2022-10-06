@@ -1,0 +1,153 @@
+name: labwork-docker
+
+env:
+  TEST_SERVER: https://dhbw.johannes-bauer.com/lwsub/
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  DEFAULT_ASSIGNMENT: labwork01
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # python_stuff:
+  #   runs-on: ubuntu-latest
+  #   name: Magic Python stuff (TODO)
+  #   steps:
+  #     - name: dummy
+  #       id: py-dummy
+  #       run: echo TODO - Python stuff
+  check_requirements:
+    name: Check requirements
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: needs to contain a "labwork" subdirectory which contains the submission
+        id: check-subdir
+        run: |
+          if [ -d labwork ]; then
+            echo "OK"
+          else
+            echo "ERROR: No 'labwork' subdirectory found"
+            exit 1
+          fi
+      - name: build script may be present for compiling code
+        id: check-build
+        run: |
+          if [ -f labwork/build ]; then
+            echo "OK"
+          else
+            echo "WARNING: No 'build' found (not required)"
+          fi
+      - name: build script must be executable
+        id: check-build-exec
+        run: |
+          if [ -f labwork/build ]; then
+            if [ -x labwork/build ]; then
+              echo "OK"
+            else
+              echo "ERROR: 'build' is not executable"
+              exit 1
+            fi
+          fi
+      - name: run script must be present for running code
+        id: check-run
+        run: |
+          if [ -f labwork/run ]; then
+            echo "OK"
+          else
+            echo "ERROR: No 'run' found (required)"
+            exit 1
+          fi
+      - name: run script must be executable
+        id: check-run-exec
+        run: |
+          if [ -x labwork/run ]; then
+            echo "OK"
+          else
+            echo "ERROR: 'run' is not executable"
+            exit 1
+          fi
+  build_tar_gz:
+    name: Build tar.gz
+    needs: check_requirements
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build tar.gz
+        id: build-tar-gz
+        run: |
+          tar -czvf submission.tar.gz labwork
+      - name: Upload tar.gz
+        uses: actions/upload-artifact@v3
+        with:
+          name: current-submission
+          path: submission.tar.gz
+  labwork_docker_run:
+    name: Test project inside labwork-docker container
+    needs: build_tar_gz
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load current assignment
+        run: |
+          if [ -f .current_assignment ]; then
+            ass=$(cat .current_assignment | head -n 1)
+            echo "Loaded current assignment: $ass"
+          else
+            ass=$(echo $DEFAULT_ASSIGNMENT)
+            echo "No current assignment found, using default: $ass"
+            echo "## WARNING" >> $GITHUB_STEP_SUMMARY
+            echo "No current assignment found, using default: $ass" >> $GITHUB_STEP_SUMMARY
+            echo "You can set the current assignment by creating a file `.current_assignment` containing only the assignment name in the root of your repository. You can also set the default assignment by setting the `DEFAULT_ASSIGNMENT` environment variable in the workflow file." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "ASSIGNMENT=$ass" >> $GITHUB_ENV
+      - name: Clone repository johndoe31415/labwork-docker
+        uses: actions/checkout@v3
+        with:
+          repository: johndoe31415/labwork-docker
+      - name: Ping Test-Server
+        uses: srt32/uptime@master
+        with:
+          url-to-hit: ${{ env.TEST_SERVER }}
+          # expected-statuses: "200"
+      - uses: actions/download-artifact@v3
+        with:
+          name: current-submission
+      - name: Pull labwork-docker image
+        run: docker pull ghcr.io/johndoe31415/labwork-docker:master
+      - name: Run labwork container with submission
+        env:
+          TARBALL: submission.tar.gz
+          SERVER: ${{ env.TEST_SERVER }}
+          CLIENT_ID: ${{ env.CLIENT_ID }}
+        run: |
+          echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
+          ./run-testcases -n -a labwork01 -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY # TODO: -a labworkXX
+  get_stats:
+    name: Print stats
+    needs: labwork_docker_run
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "## Status after executing current submission" >> $GITHUB_STEP_SUMMARY
+          echo "| name | description | points |" >> $GITHUB_STEP_SUMMARY
+          echo "| ---- | ----------- | ------ |" >> $GITHUB_STEP_SUMMARY
+          res=$(curl -H "Accept: application/json" $TEST_SERVER/status/$CLIENT_ID)
+          if [ $? -ne 0 ]; then
+            echo "ERROR: Could not get status from server"
+            exit 1
+          fi
+          for ass in $(echo "${res}" | jq -r '.payload.assignments[] | @base64'); do
+              _jq() {
+              echo ${ass} | base64 --decode | jq -r ${1}
+              }
+            echo "| $(_jq '.name') | $(_jq '.description') | $(_jq '.points') / $(_jq '.max_points') |" >> $GITHUB_STEP_SUMMARY
+          done
