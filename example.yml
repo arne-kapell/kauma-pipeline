@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-pipeline:
+  reusable-pipeline:
     uses: arne-kapell/kauma-pipeline/.github/workflows/pipeline.yml@main
     with:
       TEST_SERVER: 'https://dhbw.johannes-bauer.com/lwsub/' # optional (default: https://dhbw.johannes-bauer.com/lwsub/)

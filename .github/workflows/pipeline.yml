@@ -18,7 +18,6 @@ on:
       CLIENT_ID:
         required: true
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # python_stuff:
   #   runs-on: ubuntu-latest
@@ -134,7 +133,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
-          ./run-testcases -n -a labwork01 -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY # TODO: -a labworkXX
+          ./run-testcases -n -a ${{ env.ASSIGNMENT  }} -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY
   get_stats:
     name: Print stats
     needs: labwork_docker_run
