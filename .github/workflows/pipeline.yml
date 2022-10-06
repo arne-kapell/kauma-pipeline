@@ -108,7 +108,7 @@ jobs:
             ass=${{ inputs.DEFAULT_ASSIGNMENT }}
             echo "No current assignment found, using default: $ass"
             echo "## WARNING" >> $GITHUB_STEP_SUMMARY
-            echo "No current assignment found, using default: $ass" >> $GITHUB_STEP_SUMMARY
+            echo "No current assignment found, using default: `$ass`" >> $GITHUB_STEP_SUMMARY
             echo "You can set the current assignment by creating a file `.current_assignment` containing only the assignment name in the root of your repository. You can also set the default assignment by setting the `DEFAULT_ASSIGNMENT` environment variable in the workflow file." >> $GITHUB_STEP_SUMMARY
           fi
           echo "ASSIGNMENT=$ass" >> $GITHUB_ENV
@@ -134,7 +134,9 @@ jobs:
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
           echo "## Container execution logs" >> $GITHUB_STEP_SUMMARY
+          echo "```console" >> $GITHUB_STEP_SUMMARY
           ./run-testcases -n -a ${{ env.ASSIGNMENT  }} -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
   get_stats:
     name: Print stats
     needs: labwork_docker_run
@@ -156,5 +158,5 @@ jobs:
               _jq() {
               echo ${ass} | base64 --decode | jq -r ${1}
               }
-            echo "| $(_jq '.name') | $(_jq '.description') | $(_jq '.points') / $(_jq '.max_points') |" >> $GITHUB_STEP_SUMMARY
+            echo "| **$(_jq '.name')** | $(_jq '.description') | **$(_jq '.points')** / $(_jq '.max_points') |" >> $GITHUB_STEP_SUMMARY
           done
