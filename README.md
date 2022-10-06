@@ -5,6 +5,7 @@ Reusable GitHub workflow for KAuMA projects at DHBW Mannheim.
 You just have to copy the [example workflow](example.yml) into the `.github/workflows` directory of your project and adjust the sections `with` and `env` to your needs. (Triggers can be adjusted as well, but the example should be fine for most projects.)
 
 ## Useful Links
+- [labwork-docker](https://github.com/johndoe31415/labwork-docker): Docker image used for the pipeline
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [GitHub Workflow Documentation](https://docs.github.com/en/actions/using-workflows/about-workflows)
 - [GitHub Actions Marketplace](https://github.com/marketplace?type=actions)
