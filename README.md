@@ -14,7 +14,7 @@ jobs:
 ```
 
 ## Usage
-You just have to copy the [example workflow](example.yml) into the `.github/workflows` directory of your project and adjust the sections `with` and `env` to your needs. (Triggers can be adjusted as well, but the example should be fine for most projects.)
+You just have to copy the [example workflow](example.yml) into the `.github/workflows` directory of your project and adjust the sections `with` and `secrets` to your needs. (Triggers can be adjusted as well, but the example should be fine for most projects.)
 
 ## Useful Links
 - [labwork-docker](https://github.com/johndoe31415/labwork-docker): Docker image used for the pipeline
