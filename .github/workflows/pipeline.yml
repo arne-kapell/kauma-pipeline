@@ -37,7 +37,7 @@ jobs:
           if [ -d labwork ]; then
             echo "OK"
           else
-            echo "ERROR: No 'labwork' subdirectory found"
+            echo "ERROR: No \`labwork\` subdirectory found" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
       - name: build script may be present for compiling code
@@ -46,7 +46,7 @@ jobs:
           if [ -f labwork/build ]; then
             echo "OK"
           else
-            echo "WARNING: No 'build' found (not required)"
+            echo "WARNING: No \`build\` found (not required)" >> $GITHUB_STEP_SUMMARY
           fi
       - name: build script must be executable
         id: check-build-exec
@@ -55,7 +55,8 @@ jobs:
             if [ -x labwork/build ]; then
               echo "OK"
             else
-              echo "ERROR: 'build' is not executable"
+              echo "ERROR: \`build\` is not executable" >> $GITHUB_STEP_SUMMARY
+              echo "*HINT: The git command \`git add --chmod=+x build\` can be used (when inside the \`labwork\` directory)*" >> $GITHUB_STEP_SUMMARY
               exit 1
             fi
           fi
@@ -65,7 +66,7 @@ jobs:
           if [ -f labwork/run ]; then
             echo "OK"
           else
-            echo "ERROR: No 'run' found (required)"
+            echo "ERROR: No \`run\` found (required)" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
       - name: run script must be executable
@@ -74,7 +75,8 @@ jobs:
           if [ -x labwork/run ]; then
             echo "OK"
           else
-            echo "ERROR: 'run' is not executable"
+            echo "ERROR: \`run\` is not executable" >> $GITHUB_STEP_SUMMARY
+            echo "*HINT: The git command \`git add --chmod=+x run\` can be used (when inside the \`labwork\` directory)*" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
   build_tar_gz:
