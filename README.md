@@ -16,6 +16,8 @@ jobs:
 ## Usage
 You just have to copy the [example workflow](example.yml) into the `.github/workflows` directory of your project and adjust the sections `with` and `secrets` to your needs. (Triggers can be adjusted as well, but the example should be fine for most projects.)
 
+IMPORTANT: Please don't forget to set your `CLIENT_ID` in GitHub Secrets (can be found in Repository settings)!
+
 ## Useful Links
 - [labwork-docker](https://github.com/johndoe31415/labwork-docker): Docker image used for the pipeline
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
