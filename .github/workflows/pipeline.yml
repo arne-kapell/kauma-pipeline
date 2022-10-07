@@ -108,7 +108,7 @@ jobs:
             ass=${{ inputs.DEFAULT_ASSIGNMENT }}
             echo "No current assignment found, using default: $ass"
             echo "## WARNING" >> $GITHUB_STEP_SUMMARY
-            echo 'No current assignment found, using default: `$ass`'' >> $GITHUB_STEP_SUMMARY
+            echo "No current assignment found, using default: \`$ass\`" >> $GITHUB_STEP_SUMMARY
             echo "You can set the current assignment by creating a file `.current_assignment` containing only the assignment name in the root of your repository. You can also set the default assignment by setting the `DEFAULT_ASSIGNMENT` environment variable in the workflow file." >> $GITHUB_STEP_SUMMARY
           fi
           echo "ASSIGNMENT=$ass" >> $GITHUB_ENV
