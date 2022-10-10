@@ -117,7 +117,7 @@ jobs:
       - name: Load past assignments and combine with current
         run: |
           if [ -f .past_assignments ]; then
-            $past_as_list=$(cat .past_assignments | head -n 1)
+            mapfile -t past_as_list < .past_assignments
             echo "Loaded past assignments: $past_as_list"
           else
             echo "No past assignments found"
@@ -125,7 +125,7 @@ jobs:
             echo "No past assignments found" >> $GITHUB_STEP_SUMMARY
             echo "You can set past assignments by creating a file \`.past_assignments\` containing one assignment name per line in the root of your repository." >> $GITHUB_STEP_SUMMARY
           fi
-          $joined=$(echo "[$past_as_json, \"${{ steps.load-assignments.outputs.current }}\"]" | jq -c -s 'add')
+          $joined=$(echo "[$past_as_list, \"${{ steps.load-assignments.outputs.current }}\"]" | jq -c -s 'add')
           echo "::set-output name=all::$joined"
           echo $joined
   labwork_docker_run:
