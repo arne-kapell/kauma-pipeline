@@ -92,6 +92,8 @@ jobs:
     name: Load assignments from repository files
     needs: build_tar_gz
     runs-on: ubuntu-latest
+    outputs:
+      assignments: ${{ steps.past-and-join.outputs.assignments }}
     steps:
       - uses: actions/checkout@v3
       - name: Load current assignment
@@ -108,6 +110,7 @@ jobs:
           fi
           echo "CURRENT_ASSIGNMENT=$ass" >> $GITHUB_ENV
       - name: Load past assignments and combine with current
+        id: past-and-join
         run: |
           if [ -f .past_assignments ]; then
             mapfile -t past_as_list < .past_assignments
@@ -122,29 +125,15 @@ jobs:
           joined+=("${{ env.CURRENT_ASSIGNMENT }}")
           joined_as_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${joined[@]}")
           echo "Joined assignments: $joined_as_json"
-          echo "ASSIGNMENTS=$joined_as_json" >> $GITHUB_ENV
-  debug:
-    name: Debug
-    needs: load_assignments
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug
-        env:
-          CURRENT_ASSIGNMENT: ${{ env.CURRENT_ASSIGNMENT }}
-          ASSIGNMENTS: ${{ env.ASSIGNMENTS }}
-        run: |
-          echo "Current assignment: $CURRENT_ASSIGNMENT"
-          echo "Assignments: $ASSIGNMENTS"
+          echo "::set-output name=assignments::$joined_as_json"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
     runs-on: ubuntu-latest
-    env:
-      ASSIGNMENTS: ${{ matrix.assignments }}
     strategy:
       fail-fast: false
       matrix: 
-        assignments: ${{ fromJson(needs.load_assignments.outputs.matrix).assignments }}
+        assignment: ${{ fromJson(needs.load_assignments.outputs.assignments) }}
     steps:
       - name: Clone repository johndoe31415/labwork-docker
         uses: actions/checkout@v3
