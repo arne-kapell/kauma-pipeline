@@ -130,23 +130,26 @@ jobs:
           joined=$past_as_list
           joined+=("${{ env.CURRENT_ASSIGNMENT }}")
           joined_as_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${joined[@]}")
-          echo "Joined assignments: $joined_as_json"
+          echo "Joined assignments output matrix: {\"assignments\":$joined_as_json}"
           echo "::set-output name=matrix::{\"assignments\":$joined_as_json}"
-          echo "MATRIX={\"assignments\":$joined_as_json}" >> $GITHUB_ENV
   debug:
     name: Debug
     needs: load_assignments
     runs-on: ubuntu-latest
     steps:
       - name: Debug
+        env:
+          MATRIX: ${{ toJson(needs.load_assignments.outputs.matrix) }}
         run: |
           echo "Current assignment (env): ${{ env.CURRENT_ASSIGNMENT }}"
           echo "Matrix: ${{ needs.load_assignments.outputs.matrix }}"
-          echo "Matrix env: $MATRIX"
+          echo "Matrix env: ${{ env.MATRIX }}"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
     runs-on: ubuntu-latest
+    env:
+      ASSIGNMENTS: ${{ matrix.assignments }}
     strategy:
       fail-fast: false
       matrix: 
