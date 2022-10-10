@@ -116,6 +116,7 @@ jobs:
             mapfile -t past_as_list < .past_assignments
             echo "Loaded past assignments: $past_as_list (length: ${#past_as_list[@]})"
           else
+            past_as_list=()
             echo "No past assignments found"
             echo "## WARNING" >> $GITHUB_STEP_SUMMARY
             echo "No past assignments found" >> $GITHUB_STEP_SUMMARY
