@@ -135,7 +135,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # assignment: {{ env.PAST_ASSIGNMENTS }}{{ env.CURRENT_ASSIGNMENT }}
         assignment: [{{ env.CURRENT_ASSIGNMENT }}]
     steps:
       # - uses: actions/checkout@v3
