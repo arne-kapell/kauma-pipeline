@@ -99,6 +99,8 @@ jobs:
     name: Load assignments from repository files
     needs: build_tar_gz
     runs-on: ubuntu-latest
+    outputs:
+      assignments: ${{ steps.load-assignments.outputs.assignments }}
     steps:
       - uses: actions/checkout@v3
       - name: Load current assignment
@@ -128,7 +130,7 @@ jobs:
           printf -v joined '%s,' "${past_as_list[@]}" "${{ env.CURRENT_ASSIGNMENT }}"
           joined=${joined%,}
           joined="[$joined]"
-          echo "ALL_ASSIGNMENTS=$joined" >> $GITHUB_ENV
+          echo "::set-output name=assignments::$joined"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
@@ -136,22 +138,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        assignment: ${{ env.ALL_ASSIGNMENTS }}
+        assignment: ${{ needs.load_assignments.outputs.assignments }}
     steps:
-      # - uses: actions/checkout@v3
-      # - name: Load current assignment
-      #   run: |
-      #     if [ -f .current_assignment ]; then
-      #       ass=$(cat .current_assignment | head -n 1)
-      #       echo "Loaded current assignment: $ass"
-      #     else
-      #       ass=${{ inputs.DEFAULT_ASSIGNMENT }}
-      #       echo "No current assignment found, using default: $ass"
-      #       echo "## WARNING" >> $GITHUB_STEP_SUMMARY
-      #       echo "No current assignment found, using default: \`$ass\`" >> $GITHUB_STEP_SUMMARY
-      #       echo "You can set the current assignment by creating a file \`.current_assignment\` containing only the assignment name in the root of your repository. You can also set the default assignment by setting the \`DEFAULT_ASSIGNMENT\` environment variable in the workflow file." >> $GITHUB_STEP_SUMMARY
-      #     fi
-      #     echo "ASSIGNMENT=$ass" >> $GITHUB_ENV
       - name: Clone repository johndoe31415/labwork-docker
         uses: actions/checkout@v3
         with:
