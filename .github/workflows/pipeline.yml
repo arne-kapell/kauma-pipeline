@@ -127,7 +127,8 @@ jobs:
           fi
           printf -v joined '%s,' "${past_as_list[@]}" "${{ env.CURRENT_ASSIGNMENT }}"
           joined=${joined%,}
-          echo "::set-output name=all::\[$joined\]"
+          joined="[$joined]"
+          echo "::set-output name=all::$joined"
           echo $joined
   labwork_docker_run:
     name: Test project inside labwork-docker container
