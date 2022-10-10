@@ -97,7 +97,6 @@ jobs:
           path: submission.tar.gz
   load_assignments:
     name: Load assignments from repository files
-    id: load-assignments
     needs: build_tar_gz
     runs-on: ubuntu-latest
     steps:
