@@ -138,7 +138,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.load_assignments.outputs.matrix) }}
+      matrix: ${{fromJson(needs.load_assignments.outputs.matrix)}}
     steps:
       - name: Clone repository johndoe31415/labwork-docker
         uses: actions/checkout@v3
