@@ -139,11 +139,11 @@ jobs:
     steps:
       - name: Debug
         env:
+          CURRENT_ASSIGNMENT: ${{ env.CURRENT_ASSIGNMENT }}
           MATRIX: ${{ toJson(needs.load_assignments.outputs.matrix) }}
         run: |
-          echo "Current assignment (env): ${{ env.CURRENT_ASSIGNMENT }}"
-          echo "Matrix: ${{ needs.load_assignments.outputs.matrix }}"
-          echo "Matrix env: ${{ env.MATRIX }}"
+          echo "Current assignment (env): $CURRENT_ASSIGNMENT"
+          echo "Matrix: $MATRIX"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
