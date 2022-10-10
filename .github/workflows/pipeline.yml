@@ -19,13 +19,6 @@ on:
         required: true
 
 jobs:
-  # python_stuff:
-  #   runs-on: ubuntu-latest
-  #   name: Magic Python stuff (TODO)
-  #   steps:
-  #     - name: dummy
-  #       id: py-dummy
-  #       run: echo TODO - Python stuff
   check_requirements:
     name: Check requirements
     runs-on: ubuntu-latest
@@ -99,8 +92,6 @@ jobs:
     name: Load assignments from repository files
     needs: build_tar_gz
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.load-assignments.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
       - name: Load current assignment
@@ -130,8 +121,8 @@ jobs:
           joined=$past_as_list
           joined+=("${{ env.CURRENT_ASSIGNMENT }}")
           joined_as_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${joined[@]}")
-          echo "Joined assignments output matrix: {\"assignments\":$joined_as_json}"
-          echo "::set-output name=matrix::{\"assignments\":$joined_as_json}"
+          echo "Joined assignments: $joined_as_json"
+          echo "ASSIGNMENTS=$joined_as_json" >> $GITHUB_ENV
   debug:
     name: Debug
     needs: load_assignments
@@ -140,10 +131,10 @@ jobs:
       - name: Debug
         env:
           CURRENT_ASSIGNMENT: ${{ env.CURRENT_ASSIGNMENT }}
-          MATRIX: ${{ toJson(needs.load_assignments.outputs.matrix) }}
+          ASSIGNMENTS: ${{ env.ASSIGNMENTS }}
         run: |
-          echo "Current assignment (env): $CURRENT_ASSIGNMENT"
-          echo "Matrix: $MATRIX"
+          echo "Current assignment: $CURRENT_ASSIGNMENT"
+          echo "Assignments: $ASSIGNMENTS"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
