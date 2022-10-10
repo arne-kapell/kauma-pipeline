@@ -125,7 +125,7 @@ jobs:
             echo "No past assignments found" >> $GITHUB_STEP_SUMMARY
             echo "You can set past assignments by creating a file \`.past_assignments\` containing one assignment name per line in the root of your repository." >> $GITHUB_STEP_SUMMARY
           fi
-          $joined_as_json=$(echo "[\"$ass\",${past_as_list[@]}]" | jq -R -s -c 'split(",") | unique')
+          joined_as_json=$(echo "[\"$ass\",${past_as_list[@]}]" | jq -R -s -c 'split(",") | unique')
           echo "::set-output name=all::$joined_as_json"
           echo $joined_as_json
   labwork_docker_run:
