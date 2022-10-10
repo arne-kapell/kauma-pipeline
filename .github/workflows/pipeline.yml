@@ -117,8 +117,8 @@ jobs:
       - name: Load past assignments and combine with current
         run: |
           if [ -f .past_assignments ]; then
-            $past_as_json=$(cat .past_assignments | jq -R -s -c 'split("\n")')
-            echo "Loaded past assignments: $past_as_json"
+            $past_as_list=$(cat .past_assignments | head -n 1)
+            echo "Loaded past assignments: $past_as_list"
           else
             echo "No past assignments found"
             echo "## WARNING" >> $GITHUB_STEP_SUMMARY
