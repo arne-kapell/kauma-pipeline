@@ -133,9 +133,9 @@ jobs:
     needs: load_assignments
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         assignment: [{{ env.CURRENT_ASSIGNMENT }}]
+      fail-fast: false
     steps:
       # - uses: actions/checkout@v3
       # - name: Load current assignment
