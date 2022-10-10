@@ -100,7 +100,7 @@ jobs:
     needs: build_tar_gz
     runs-on: ubuntu-latest
     outputs:
-      assignments: ${{ steps.load-assignments.outputs.assignments }}
+      matrix: ${{ steps.load-assignments.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
       - name: Load current assignment
@@ -131,15 +131,14 @@ jobs:
           joined+=("${{ env.CURRENT_ASSIGNMENT }}")
           joined_as_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${joined[@]}")
           echo "Joined assignments: $joined_as_json"
-          echo "::set-output name=assignments::$joined_as_json"
+          echo "::set-output name=matrix::{\"assignments\":$joined_as_json}"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        assignment: ${{ fromJson(needs.load_assignments.outputs.assignments) }}
+      matrix: ${{ fromJson(needs.load_assignments.outputs.matrix) }}
     steps:
       - name: Clone repository johndoe31415/labwork-docker
         uses: actions/checkout@v3
