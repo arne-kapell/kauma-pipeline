@@ -132,6 +132,15 @@ jobs:
           joined_as_json=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${joined[@]}")
           echo "Joined assignments: $joined_as_json"
           echo "::set-output name=matrix::{\"assignments\":$joined_as_json}"
+  debug:
+    name: Debug
+    needs: load_assignments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug
+        run: |
+          echo "Current assignment: ${{ env.CURRENT_ASSIGNMENT }}"
+          echo "Matrix: ${{ needs.load_assignments.outputs.matrix }}"
   labwork_docker_run:
     name: Test project inside labwork-docker container
     needs: load_assignments
