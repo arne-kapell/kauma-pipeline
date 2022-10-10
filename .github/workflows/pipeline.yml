@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo "Current assignment: ${{ env.CURRENT_ASSIGNMENT }}"
+          echo "Current assignment (env): ${{ env.CURRENT_ASSIGNMENT }}"
           echo "Matrix: ${{ needs.load_assignments.outputs.matrix }}"
           echo "Matrix env: $MATRIX"
   labwork_docker_run:
@@ -149,7 +149,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(env.MATRIX)}}
+      matrix: 
+        assignments: ${{ fromJson(needs.load_assignments.outputs.matrix).assignments }}
     steps:
       - name: Clone repository johndoe31415/labwork-docker
         uses: actions/checkout@v3
