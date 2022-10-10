@@ -127,7 +127,7 @@ jobs:
           fi
           printf -v joined '%s,' "${past_as_list[@]}" "${{ env.CURRENT_ASSIGNMENT }}"
           joined=${joined%,}
-          echo "::set-output name=all::$joined"
+          echo "::set-output name=all::\[$joined\]"
           echo $joined
   labwork_docker_run:
     name: Test project inside labwork-docker container
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        assignment: [${{ needs.load_assignments.outputs.all }}]
+        assignment: ${{ needs.load_assignments.outputs.all }}
     steps:
       # - uses: actions/checkout@v3
       # - name: Load current assignment
