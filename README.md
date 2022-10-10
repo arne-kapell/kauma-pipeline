@@ -19,7 +19,10 @@ You just have to copy the [example workflow](example.yml) into the `.github/work
 IMPORTANT: Please don't forget to set your `CLIENT_ID` in GitHub Secrets (can be found in Repository settings)!
 
 ### Current assignment
-The pipeline looks for which assignment to run the container with in `.current_assignment` in your repository root. You can then just change its value for moving on to the next assignment. If this file can't be found/read the `DEFAULT_ASSIGNMENT` is used.
+The pipeline looks for which assignment to run the container with in `.current_assignment` in your repository root. You can then just change its value for moving on to the next assignment *(everything but the first line will be ignored)*. If this file can't be found/read the `DEFAULT_ASSIGNMENT` is used.
+
+### Past assignments (optional)
+If you want to run the pipeline for past assignments, you can create a file `.past_assignments` in your repository root. It should contain a list of all past assignments, **one per line**. The pipeline will then run the container for each of these assignments as well.
 
 ## Useful Links
 - [labwork-docker](https://github.com/johndoe31415/labwork-docker): Docker image used for the pipeline
