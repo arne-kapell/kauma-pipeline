@@ -14,6 +14,11 @@ on:
         type: string
         required: false
         default: 'labwork01'
+      CONTAINER_TIMEOUT:
+        description: 'Timeout for each container run (in seconds'
+        type: number
+        required: false
+        default: 30
     secrets:
       CLIENT_ID:
         required: true
@@ -155,11 +160,12 @@ jobs:
           TARBALL: submission.tar.gz
           SERVER: ${{ inputs.TEST_SERVER }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          TIMEOUT: ${{ inputs.CONTAINER_TIMEOUT }}
         run: |
           echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
           echo "## Container execution logs (\`${{ matrix.assignment  }}\`)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          ./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER $TARBALL >> $GITHUB_STEP_SUMMARY
+          ./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER -t $TIMEOUT $TARBALL >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
   get_stats:
     name: Print stats
