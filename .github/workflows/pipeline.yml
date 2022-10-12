@@ -162,7 +162,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           TIMEOUT: ${{ inputs.CONTAINER_TIMEOUT }}
         run: |
-          echo "Executing labwork-docker with submission: $CLIENT_ID | $SERVER | $TARBALL"
+          echo "Executing labwork-docker with submission for $CLIENT_ID against $SERVER with timeout $TIMEOUT"
           echo "## Container execution logs (\`${{ matrix.assignment  }}\`)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           ./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER -t $TIMEOUT $TARBALL >> $GITHUB_STEP_SUMMARY
