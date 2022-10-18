@@ -170,7 +170,7 @@ jobs:
           IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
           TIMEOUT: ${{ inputs.CONTAINER_TIMEOUT }}
         run: |
-          echo "Executing labwork-docker with submission for $CLIENT_ID against $SERVER with timeout $TIMEOUT"
+          echo "Executing labwork-docker:$IMAGE_TAG with $TARBALL for ${{ matrix.assignment }} against $SERVER with timeout $TIMEOUT"
           echo "## Container execution logs (\`${{ matrix.assignment  }}\`)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           output=$(./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER -i ghcr.io/johndoe31415/labwork-docker:$IMAGE_TAG -t $TIMEOUT $TARBALL)
