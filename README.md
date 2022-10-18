@@ -10,6 +10,7 @@ jobs:
       TEST_SERVER: 'https://dhbw.johannes-bauer.com/lwsub/' # optional (default: https://dhbw.johannes-bauer.com/lwsub/)
       DEFAULT_ASSIGNMENT: 'labwork01' # optional (default: labwork01)
       CONTAINER_TIMEOUT: 30 # optional (default: 30)
+      IMAGE_TAG: 'master' # optional (default: nightly)
     secrets:
       CLIENT_ID: ${{ secrets.CLIENT_ID }} # required (can be set in your repository settings)
 ```

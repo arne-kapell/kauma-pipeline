@@ -19,6 +19,11 @@ on:
         type: number
         required: false
         default: 30
+      IMAGE_TAG:
+        description: 'Tag of the image to use'
+        type: string
+        required: false
+        default: 'nightly'
     secrets:
       CLIENT_ID:
         required: true
@@ -154,7 +159,9 @@ jobs:
         with:
           name: current-submission
       - name: Pull labwork-docker image
-        run: docker pull ghcr.io/johndoe31415/labwork-docker:master
+        env:
+          IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
+        run: docker pull ghcr.io/johndoe31415/labwork-docker:$IMAGE_TAG
       - name: Run labwork container with submission
         env:
           TARBALL: submission.tar.gz
