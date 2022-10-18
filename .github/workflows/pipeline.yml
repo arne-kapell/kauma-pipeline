@@ -167,12 +167,13 @@ jobs:
           TARBALL: submission.tar.gz
           SERVER: ${{ inputs.TEST_SERVER }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
           TIMEOUT: ${{ inputs.CONTAINER_TIMEOUT }}
         run: |
           echo "Executing labwork-docker with submission for $CLIENT_ID against $SERVER with timeout $TIMEOUT"
           echo "## Container execution logs (\`${{ matrix.assignment  }}\`)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          output=$(./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER -t $TIMEOUT $TARBALL)
+          output=$(./run-testcases -n -a ${{ matrix.assignment }} -c $CLIENT_ID -u $SERVER -i ghcr.io/johndoe31415/labwork-docker:$IMAGE_TAG -t $TIMEOUT $TARBALL)
           # max size for $GITHUB_STEP_SUMMARY is 1024k
           if [ ${#output} -gt 1024000 ]; then
             echo "ERROR: Log too long, only first 1024k will be shown" >> $GITHUB_STEP_SUMMARY
