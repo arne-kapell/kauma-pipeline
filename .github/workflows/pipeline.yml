@@ -151,7 +151,7 @@ jobs:
       matrix: 
         assignment: ${{ fromJson(needs.load_assignments.outputs.assignments) }}
     steps:
-      - name: Clone repository johndoe31415/labwork-docker
+      - name: Clone repository johndoe31415/labwork-docker (${{ inputs.REPO_TAG }})
         uses: actions/checkout@v3
         with:
           repository: johndoe31415/labwork-docker
